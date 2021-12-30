@@ -1,8 +1,12 @@
 #!/bin/bash
 
-pacman -S ntfs-3g gvfs gvfs-smb jq pkgfile go wget noto-fonts polkit-gnome playerctl thunar thunar-archive-plugin file-roller zsh python-pip pulseaudio pulseaudio-alsa pavucontrol ttf-font-awesome base-devel python-pywal sway vim neovim waybar kitty mako wl-clipboard swayidle slurp grim pamixer noto-fonts-emoji noto-fonts-cjk zsh
+pacman -S ntfs-3g gvfs gvfs-smb jq pkgfile go wget noto-fonts polkit-gnome pavucontrol ttf-font-awesome base-devel vim neovim kitty noto-fonts-emoji noto-fonts-cjk \
+kitty firefox thunderbird notepadqq chromium python pass cmus vulkan-radeon xf86-video-amdgpu bemenu scrot \
+xmonad xmonad-contrib xmonad-utils xmonad-extras-git polybar xclip xorg-server xorg-xinit twmnd nitrogen picom xorg-xset xorg-xsetkbmap xorg-xsetroot i3lock bemenu-x11 bemenu-dmenu \
+wine winetricks dxvk lutris steam proton steam-native-runtime \
+alsa-utils pipewire pipewire-pulse pipewire-alsa playerctl pactl
 
-ln -sf /usr/share/zoneinfo/Europe/London /etc/localtime
+ln -sf /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
 
 hwclock --systohc
 
@@ -11,9 +15,7 @@ echo -e "en_GB.UTF-8 UTF-8\nen_US.UTF-8 UTF-8" >> /etc/locale.gen
 
 locale-gen
 
-echo LANG=en_GB.UTF-8 >> /etc/locale.conf
-
-echo KEYMAP=uk >> /etc/vconsole.conf
+echo LANG=en_US.UTF-8 >> /etc/locale.conf
 
 echo Enter a computer hostname to use
 read hostname
@@ -73,35 +75,21 @@ gpasswd -a $username wheel
 
 echo '%wheel ALL=(ALL) NOPASSWD: ALL' | EDITOR='tee -a' visudo
 
-chsh -s /bin/zsh $username
-
 echo Downloading and copying dotfiles
 cd /home/$username
-git clone https://github.com/techtino/dotfiles
-cd dotfiles
+git clone https://github.com/Sneezycheesy/linux_setup_tool
+cd linux_setup_tool
 git submodule init
 git submodule update
+cp -r .config .xmonad .
 cd ..
-cp -r dotfiles/. .
 
 git clone https://aur.archlinux.org/yay-git.git
 chown -R $username:$username .
 cd yay-git
 su $username -c 'makepkg -si'
 
-cd /home/$username
-pip3 install wpgtk
-mkdir -p /home/$username/.config/wpg/templates
-chown -R $username:$username .
-su $username -c 'wpg-install.sh -g'
-su $username -c 'wpg-install.sh -i'
-
-git clone https://gitlab.com/bit9tream/bitfetch.git
-cd bitfetch
-make CC=gcc bitfetch XINERAMA=NO X=NO
-make install
-
-su $username -c 'yay -S networkmanager-iwd networkmanager-dmenu-git swaylock-effects-git swappy redshift-wayland-git autotiling wob-git breeze-default-cursor-theme rofi-lbonn-wayland-git'
+su $username -c 'yay -S networkmanager-iwd networkmanager-dmenu-git'
 
 systemctl enable iwd
 
